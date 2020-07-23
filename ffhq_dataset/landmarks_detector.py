@@ -12,7 +12,10 @@ class LandmarksDetector:
     self.shape_predictor = dlib.shape_predictor(predictor_model_path)
 
   def get_landmarks(self, image):
-    img = dlib.load_rgb_image(image)
+    if not isinstance(image, str):
+      img = image
+    else:
+      img = dlib.load_rgb_image(image)
     dets = self.detector(img, 1)
 
     for detection in dets:

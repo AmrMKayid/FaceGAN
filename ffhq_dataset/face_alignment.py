@@ -52,10 +52,14 @@ def image_align(
   qsize = np.hypot(*x) * 2
 
   # Load in-the-wild image.
-  if not os.path.isfile(src_file):
+  if isinstance(src_file, str) and not os.path.isfile(src_file):
     print('\nCannot find source image. Please run "--wilds" before "--align".')
     return
-  img = PIL.Image.open(src_file).convert('RGBA').convert('RGB')
+  if isinstance(src_file, str):
+    img = PIL.Image.open(src_file).convert('RGBA').convert('RGB')
+  else:
+    img = PIL.Image.fromarray(src_file).convert('RGBA').convert('RGB')
+  print(img)
 
   # Shrink.
   shrink = int(np.floor(qsize / output_size * 0.5))
@@ -119,3 +123,4 @@ def image_align(
 
   # Save aligned image.
   img.save(dst_file, 'PNG')
+  return img

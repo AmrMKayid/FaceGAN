@@ -3,6 +3,7 @@ import bz2
 import multiprocessing
 import os
 import sys
+import numpy as np
 
 from keras.utils import get_file
 
@@ -18,6 +19,51 @@ def unpack_bz2(src_path):
   with open(dst_path, 'wb') as fp:
     fp.write(data)
   return dst_path
+
+
+def align(
+    img: np.ndarray,
+    img_name: str = 'image.png',
+    aligned_dir='./data/aligned',
+    output_size=1024,
+    x_scale=1,
+    y_scale=1,
+    em_scale=0.1,
+    use_alpha=False,
+) -> np.ndarray:
+  landmarks_model_path = unpack_bz2(
+      get_file(
+          'shape_predictor_68_face_landmarks.dat.bz2',
+          LANDMARKS_MODEL_URL,
+          cache_subdir='temp',
+      ))
+  landmarks_detector = LandmarksDetector(landmarks_model_path)
+
+  print('Aligning %s ...' % img_name)
+  aligned_img = None
+  for i, face_landmarks in enumerate(
+      landmarks_detector.get_landmarks(img),
+      start=1,
+  ):
+    try:
+      print('Starting face alignment...')
+      # face_img_name = '%s_%02d.png' % (os.path.splitext(img_name)[0], i)
+      aligned_face_path = os.path.join(aligned_dir, img_name)
+      aligned_img = image_align(
+          img,
+          aligned_face_path,
+          face_landmarks,
+          output_size=output_size,
+          x_scale=x_scale,
+          y_scale=y_scale,
+          em_scale=em_scale,
+          alpha=use_alpha,
+      )
+      print('Wrote result %s' % aligned_face_path)
+    except:
+      print("Exception in face alignment!")
+
+  return aligned_img
 
 
 if __name__ == "__main__":
