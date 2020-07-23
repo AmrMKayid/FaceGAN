@@ -402,7 +402,7 @@ def main():
       model_res=args.model_res,
       randomize_noise=args.randomize_noise,
   )
-  if (args.dlatent_avg != '',):
+  if (args.dlatent_avg != ''):
     generator.set_dlatent_avg(np.load(args.dlatent_avg))
 
   perc_model = None
