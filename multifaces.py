@@ -14,7 +14,7 @@ class MultiFaceCropper:
       cropped_size=500,
       radius=100,
   ) -> None:
-    self.face_cascade = cv2.CascadeClassifier(FaceCropper.CASCADE_PATH)
+    self.face_cascade = cv2.CascadeClassifier(MultiFaceCropper.CASCADE_PATH)
     self.cropped_size = 500
     self.radius = 100
 
@@ -34,10 +34,12 @@ class MultiFaceCropper:
       return 0
 
     #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = self.face_cascade.detectMultiScale(img,
-                                               scaleFactor=1.1,
-                                               minNeighbors=5,
-                                               minSize=(250, 250))
+    faces = self.face_cascade.detectMultiScale(
+        img,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(250, 250),
+    )
 
     if (faces is None):
       print('Failed to detect face')
@@ -57,10 +59,15 @@ class MultiFaceCropper:
     for (x, y, w, h) in faces:
       face_img = img[y - self.radius:y + h + self.radius,
                      x - self.radius:x + w + self.radius]
-      last_img = cv2.resize(face_img, (self.cropped_size, self.cropped_size))
-      cv2.imwrite(f"./data/processed/{img_name}_{FaceCropper.COUNT}.png",
-                  last_img)
-      FaceCropper.COUNT += 1
+      last_img = cv2.resize(
+          face_img,
+          (self.cropped_size, self.cropped_size),
+      )
+      cv2.imwrite(
+          f"./data/cropped/{img_name}_{MultiFaceCropper.COUNT}.png",
+          last_img,
+      )
+      MultiFaceCropper.COUNT += 1
 
 
 if __name__ == '__main__':
