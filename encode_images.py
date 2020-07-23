@@ -1,4 +1,5 @@
 import argparse
+import glob
 import os
 import pickle
 
@@ -376,7 +377,9 @@ def main():
         minibatch_size=args.batch_size,
     )
 
-  ref_images = [os.path.join(args.src_dir, x) for x in os.listdir(args.src_dir)]
+  images = glob.glob(f'{args.src_dir}/*.png') + \
+            glob.glob(f'{args.src_dir}/*.jpg')
+  ref_images = [os.path.join(args.src_dir, x) for x in images]
   ref_images = list(filter(os.path.isfile, ref_images))
 
   if len(ref_images) == 0:
