@@ -119,25 +119,29 @@ def main():
   )
   parser.add_argument(
       '--lr',
-      default=0.25,
+      #   default=0.25,
+      default=0.001,  # From Exp 12
       help='Learning rate for perceptual model',
       type=float,
   )
   parser.add_argument(
       '--decay_rate',
-      default=0.9,
+      #   default=0.9,
+      default=0.99,  # From Exp 12
       help='Decay rate for learning rate',
       type=float,
   )
   parser.add_argument(
       '--iterations',
-      default=100,
+      #   default=100,
+      default=1500,  # From Exp 12
       help='Number of optimization steps for each batch',
       type=int,
   )
   parser.add_argument(
       '--decay_steps',
-      default=4,
+      #   default=4,
+      default=9,  # From Exp 12
       help='Decay steps for learning rate decay (as a percent of iterations)',
       type=float,
   )
