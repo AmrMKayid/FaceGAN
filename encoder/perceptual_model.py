@@ -251,9 +251,8 @@ class PerceptualModel:
     rects = self.detector(im, 1)
     # loop over the face detections
     for (j, rect) in enumerate(rects):
-      """
-            Determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
-            """
+      """Determine the facial landmarks for the face region, then convert the
+      facial landmark (x, y)-coordinates to a NumPy array."""
       shape = self.predictor(im, rect)
       shape = face_utils.shape_to_np(shape)
 
