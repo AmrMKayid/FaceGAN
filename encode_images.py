@@ -100,7 +100,8 @@ def main():
   )
   parser.add_argument(
       '--optimizer',
-      default='ggt',
+      #   default='ggt',
+      default='adam',  # From Exp 12
       help='Optimization algorithm used for optimizing dlatents',
   )
 
@@ -155,7 +156,8 @@ def main():
   )
   parser.add_argument(
       '--early_stopping_threshold',
-      default=0.5,
+      #   default=0.5,
+      default=0.0005,  # From Exp 12
       help='Stop after this threshold has been reached',
       type=float,
   )
@@ -233,19 +235,22 @@ def main():
   )
   parser.add_argument(
       '--use_lpips_loss',
-      default=100,
+      #   default=100,
+      default=0,  # From Exp 12 (disabled)
       help='Use LPIPS perceptual loss; 0 to disable, > 0 to scale.',
       type=float,
   )
   parser.add_argument(
       '--use_l1_penalty',
-      default=0.5,
+      #   default=0.5,
+      default=0.3,  # From Exp 12
       help='Use L1 penalty on latents; 0 to disable, > 0 to scale.',
       type=float,
   )
   parser.add_argument(
       '--use_discriminator_loss',
-      default=0.5,
+      #   default=0.5,
+      default=0,  # From Exp 12 (disabled)
       help='Use trained discriminator to evaluate realism.',
       type=float,
   )
