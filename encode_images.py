@@ -455,26 +455,26 @@ def main():
             )),
             axis=0,
         )
-        if (dlatents is None,):
+        if (dlatents is None):
           dlatents = dl
         else:
           dlatents = np.vstack((dlatents, dl))
     else:
-      if (ff_model is None,):
-        if os.path.exists(args.load_resnet,):
+      if (ff_model is None):
+        if os.path.exists(args.load_resnet):
           from keras.applications.resnet50 import preprocess_input
           print("Loading ResNet Model:")
-          ff_model = load_model(args.load_resnet,)
+          ff_model = load_model(args.load_resnet)
 
-      if (ff_model is None,):
+      if (ff_model is None):
         if os.path.exists(args.load_effnet,):
           import efficientnet
           from efficientnet import preprocess_input
           print("Loading EfficientNet Model:")
           ff_model = load_model(args.load_effnet,)
 
-      if (ff_model is not None,):  # predict initial dlatents with ResNet model
-        if (args.use_preprocess_input,):
+      if (ff_model is not None):  # predict initial dlatents with ResNet model
+        if (args.use_preprocess_input):
           dlatents = ff_model.predict(
               preprocess_input(
                   load_images(
