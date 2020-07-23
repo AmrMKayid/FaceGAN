@@ -42,17 +42,17 @@ def main():
   )
   parser.add_argument(
       '--src_dir',
-      default='./data/aligned',
+      default='data/aligned',
       help='Directory with images for encoding',
   )
   parser.add_argument(
       '--generated_images_dir',
-      default='./data/generated',
+      default='data/generated',
       help='Directory for storing generated images',
   )
   parser.add_argument(
       '--dlatent_dir',
-      default='./data/latent_representations',
+      default='data/latent_representations',
       help='Directory for storing dlatent representations',
   )
   parser.add_argument(
@@ -62,7 +62,7 @@ def main():
   )
   parser.add_argument(
       '--mask_dir',
-      default='./data/masks',
+      default='data/masks',
       help='Directory for storing optional masks',
   )
   parser.add_argument(
@@ -329,7 +329,7 @@ def main():
   # Video params
   parser.add_argument(
       '--video_dir',
-      default='./data/videos',
+      default='data/videos',
       help='Directory for storing training videos',
   )
   parser.add_argument(
@@ -379,8 +379,8 @@ def main():
 
   images = glob.glob(f'{args.src_dir}/*.png') + \
             glob.glob(f'{args.src_dir}/*.jpg')
-  ref_images = [os.path.join(args.src_dir, x) for x in images]
-  ref_images = list(filter(os.path.isfile, ref_images))
+  #   ref_images = [os.path.join(args.src_dir, x) for x in images]
+  ref_images = list(filter(os.path.isfile, images))
 
   if len(ref_images) == 0:
     raise Exception('%s is empty' % args.src_dir)
