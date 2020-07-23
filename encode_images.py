@@ -75,11 +75,16 @@ def main():
       help=
       'Use dlatent from file specified here for truncation instead of dlatent_avg from Gs',
   )
+  #   parser.add_argument(
+  #       '--model_url',
+  #       default='https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ',
+  #       help='Fetch a StyleGAN model to train on from this URL',
+  #   )  # karras2019stylegan-ffhq-1024x1024.pkl TODO: change this to our url
   parser.add_argument(
       '--model_url',
-      default='https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ',
-      help='Fetch a StyleGAN model to train on from this URL',
-  )  # karras2019stylegan-ffhq-1024x1024.pkl TODO: change this to our url
+      default='https://drive.google.com/uc?id=1o4zmXaHtd_oNL754NsXNWi9wYOlAPTC3',
+      help='Fetcha StyleGAN model to train on from this URL'
+  )  # My Drive: karras2019stylegan-ffhq-1024x1024.pkl
   parser.add_argument(
       '--model_res',
       default=1024,
