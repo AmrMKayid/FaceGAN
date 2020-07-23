@@ -32,7 +32,8 @@ if __name__ == "__main__":
   )
   parser.add_argument(
       '--raw_dir',
-      default='./data/cropped',
+      default='./data/raw',  # Default is using raw images
+      # if multiple faces then we should select cropped
       help='Directory with raw images for face alignment',
       type=str,
   )
