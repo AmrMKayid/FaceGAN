@@ -1,7 +1,8 @@
-import numpy as np
-import scipy.ndimage
 import os
+
+import numpy as np
 import PIL.Image
+import scipy.ndimage
 
 
 def image_align(

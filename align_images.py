@@ -4,9 +4,10 @@ import multiprocessing
 import os
 import sys
 
+from keras.utils import get_file
+
 from ffhq_dataset.face_alignment import image_align
 from ffhq_dataset.landmarks_detector import LandmarksDetector
-from keras.utils import get_file
 
 LANDMARKS_MODEL_URL = 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2'
 
