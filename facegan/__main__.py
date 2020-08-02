@@ -12,6 +12,7 @@
 # import cv2
 
 from facegan.faces.styleganencoder import StyleGANEncoder
+
 # from facegan.process.align_images import FaceAligner
 # from facegan.process.multifaces import MultiFaceCropper
 

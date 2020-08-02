@@ -2,13 +2,13 @@ import argparse
 import glob
 import os
 import pickle
+from types import SimpleNamespace
 
 import numpy as np
 import PIL.Image
-from tensorflow.keras.models import load_model
 from PIL import ImageFilter
+from tensorflow.keras.models import load_model
 from tqdm import tqdm
-from types import SimpleNamespace
 
 import facegan.dnnlib as dnnlib
 import facegan.dnnlib.tflib as tflib

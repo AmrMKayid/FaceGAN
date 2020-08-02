@@ -5,14 +5,14 @@ import bz2
 import os
 import traceback
 
-import tensorflow.keras.backend as K
 import numpy as np
 import PIL.Image
 import tensorflow as tf
+import tensorflow.keras.backend as K
+from PIL import ImageFilter
 from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
 from tensorflow.keras.models import Model
 from tensorflow.keras.utils import get_file
-from PIL import ImageFilter
 
 import facegan.dnnlib.tflib as tflib
 
