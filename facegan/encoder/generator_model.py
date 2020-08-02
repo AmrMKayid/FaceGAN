@@ -4,7 +4,7 @@ from functools import partial
 import numpy as np
 import tensorflow as tf
 
-import dnnlib.tflib as tflib
+import facegan.dnnlib.tflib as tflib
 
 
 def create_stub(
