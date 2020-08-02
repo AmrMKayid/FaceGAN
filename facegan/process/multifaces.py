@@ -1,9 +1,9 @@
 from glob import glob
 from pathlib import Path
+from typing import List
 
 import cv2
 import numpy as np
-from typing import List
 
 
 class MultiFaceCropper:
@@ -27,7 +27,7 @@ class MultiFaceCropper:
   ) -> List[np.ndarray]:
     return self._crop(image)
 
-  def auto_crop(self) -> List[np.ndarray]:
+  def auto_crop(self) -> None:
 
     images = glob(f'{self.data_dir}/*.png') + glob(f'{self.data_dir}/*.jpg')
     for image_path in images:

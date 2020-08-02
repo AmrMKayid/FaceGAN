@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from keras.utils import get_file
+from tensorflow.keras.utils import get_file
 
 from facegan.ffhq.face_alignment import image_align
 from facegan.ffhq.landmarks_detector import LandmarksDetector
