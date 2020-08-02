@@ -9,16 +9,22 @@
 #     "image",
 # ).launch(share=False)
 
-import cv2
-import numpy as np
-from PIL import Image
+# import cv2
 
-from facegan.process.multifaces import MultiFaceCropper
+from facegan.faces.styleganencoder import StyleGANEncoder
+# from facegan.process.align_images import FaceAligner
+# from facegan.process.multifaces import MultiFaceCropper
 
 if __name__ == '__main__':
-    test_path = './data/raw/6faces.jpg'
-    mfc = MultiFaceCropper()
-    img = cv2.imread(test_path)
-    # print(img)
-    images = mfc.crop(img)
-    print(images, len(images), images[0].shape)
+  # test_path = './data/raw/test.jpg'
+  # mfc = MultiFaceCropper()
+  # img = cv2.imread(test_path)
+  # # print(img)
+  # images = mfc.crop(img)
+  # print(images, len(images), images[0].shape)
+  #
+  # face_aligner = FaceAligner()
+  # face_aligner.auto_align()
+
+  sg_encoder = StyleGANEncoder()
+  print(vars(sg_encoder))
