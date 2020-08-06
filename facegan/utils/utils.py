@@ -13,6 +13,7 @@ import numpy as np
 import PIL
 import PIL.Image
 from google.colab.output import eval_js
+from facegan import ROOT_PATH
 #@title `Images through Webcam`
 from IPython.display import HTML, Audio
 from PIL import Image
@@ -54,8 +55,8 @@ def take_photo(
   f = io.BytesIO(binary)
   img = np.asarray(Image.open(f))
 
-  timestampStr = datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")
-  filename = 'data/raw/photo_%s.jpeg' % timestampStr
+  timestamp_str = datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")
+  filename = f'{ROOT_PATH}/data/raw/photo_{timestamp_str}.jpeg'
   Image.fromarray(img).save(filename)
   print('Image captured and saved to %s' % filename)
 
