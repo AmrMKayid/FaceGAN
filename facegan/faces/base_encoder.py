@@ -1,16 +1,20 @@
 import os
 
+from facegan import ROOT_PATH
+
 
 class Encoder:
 
   def __init__(
       self,
-      src_dir: str = './data/aligned',  # Directory with images for encoding
+      src_dir:
+      str = f'{ROOT_PATH}/data/aligned',  # Directory with images for encoding
       generated_images_dir:
-      str = './data/generated',  # Directory for storing generated images
+      str = f'{ROOT_PATH}/data/generated',  # Directory for storing generated images
       dlatent_dir:
-      str = './data/latent_representations',  # Directory for storing dlatent representations
-      data_dir: str = './data/models',  # Directory for storing optional models
+      str = f'{ROOT_PATH}/data/latent_representations',  # Directory for storing dlatent representations
+      data_dir:
+      str = f'{ROOT_PATH}/data/models',  # Directory for storing optional models
       mask_dir: str = 'data/masks',  # Directory for storing optional masks
       load_last: str = '',  # Start with embeddings from directory
       dlatent_avg:
@@ -36,9 +40,9 @@ class Encoder:
       early_stopping_patience:
       int = 10,  # Number of iterations to wait below threshold
       load_effnet:
-      str = './data/models/finetuned_effnet.h5',  # Model to load for EfficientNet approximation of dlatents
+      str = f'{ROOT_PATH}/data/models/finetuned_effnet.h5',  # Model to load for EfficientNet approximation of dlatents
       load_resnet:
-      str = './data/models/finetuned_resnet.h5',  # Model to load for ResNet approximation of dlatents
+      str = f'{ROOT_PATH}/data/models/finetuned_resnet.h5',  # Model to load for ResNet approximation of dlatents
       use_preprocess_input:
       bool = True,  # Call process_input() first before using feed forward net
       use_best_loss:
@@ -84,7 +88,8 @@ class Encoder:
       int = 8,  # Size of blur filter to smoothly composite the images
 
       # Video params
-      video_dir: str = './data/videos',  # Directory for storing training videos
+      video_dir:
+      str = f'{ROOT_PATH}/data/videos',  # Directory for storing training videos
       output_video: bool = False,  # Generate videos of the optimization process
       video_codec: str = 'MJPG',  # FOURCC-supported video codec name
       video_frame_rate: int = 24,  # Video frames per second

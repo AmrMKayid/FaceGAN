@@ -8,10 +8,11 @@
 
 #----------------------------------------------------------------------------
 # Paths.
+from facegan import ROOT_PATH
 
 result_dir = 'results'
 data_dir = 'datasets'
-cache_dir = './data/cache'
+cache_dir = f'{ROOT_PATH}/data/cache'
 run_dir_ignore = ['results', 'datasets', 'cache']
 
 # experimental - replace Dense layers with TreeConnect

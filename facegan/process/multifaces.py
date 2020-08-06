@@ -5,14 +5,16 @@ from typing import List
 import cv2
 import numpy as np
 
+from facegan import ROOT_PATH
+
 
 class MultiFaceCropper:
-  CASCADE_PATH = "./data/face_cascade.xml"
+  CASCADE_PATH = f'{ROOT_PATH}/data/face_cascade.xml'
   COUNT = 1
 
   def __init__(
       self,
-      data_dir='./data/raw',
+      data_dir=f'{ROOT_PATH}/data/raw',
       cropped_size=1024,
       radius=500,
   ) -> None:
@@ -81,7 +83,7 @@ class MultiFaceCropper:
           (self.cropped_size, self.cropped_size),
       )
       cv2.imwrite(
-          f"./data/cropped/{img_name}_{MultiFaceCropper.COUNT}.png",
+          f'{ROOT_PATH}/data/cropped/{img_name}_{MultiFaceCropper.COUNT}.png',
           last_img,
       )
       MultiFaceCropper.COUNT += 1

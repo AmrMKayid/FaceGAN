@@ -6,6 +6,7 @@ from typing import Union
 import numpy as np
 from tensorflow.keras.utils import get_file
 
+from facegan import ROOT_PATH
 from facegan.ffhq.face_alignment import image_align
 from facegan.ffhq.landmarks_detector import LandmarksDetector
 from facegan.utils.utils import unpack_bz2
@@ -28,7 +29,7 @@ class FaceAligner:
       self,
       img: Union[np.ndarray, str],
       img_name: str = 'image.png',
-      aligned_dir='./data/aligned',
+      aligned_dir=f'{ROOT_PATH}/data/aligned',
       output_size=1024,  # The dimension of images for input to the model
       x_scale=1,  # Scaling factor for x dimension
       y_scale=1,  # Scaling factor for y dimension
@@ -64,8 +65,8 @@ class FaceAligner:
 
   def auto_align(
       self,
-      raw_dir='./data/cropped',  # Directory with raw images for face alignment
-      aligned_dir='./data/aligned',  # Directory for storing aligned images
+      raw_dir=f'{ROOT_PATH}/data/cropped',  # Directory with raw images for face alignment
+      aligned_dir=f'{ROOT_PATH}/data/aligned',  # Directory for storing aligned images
   ) -> None:
 
     images = glob(f'{raw_dir}/*.png') + glob(f'{raw_dir}/*.jpg')
