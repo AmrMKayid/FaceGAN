@@ -1,9 +1,8 @@
-# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+# Copyright (c) 2019, NVIDIA Corporation. All rights reserved.
 #
-# This work is licensed under the Creative Commons Attribution-NonCommercial
-# 4.0 International License. To view a copy of this license, visit
-# http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
-# Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+# This work is made available under the Nvidia Source Code License-NC.
+# To view a copy of this license, visit
+# https://nvlabs.github.io/stylegan2/license.html
 """Helper for managing networks."""
 
 import inspect
@@ -149,7 +148,7 @@ class Network:
 
     # Build template graph.
     with tfutil.absolute_variable_scope(
-        self.scope, reuse=tf.AUTO_REUSE), tfutil.absolute_name_scope(
+        self.scope, reuse=False), tfutil.absolute_name_scope(
             self.scope):  # ignore surrounding scopes
       assert tf.get_variable_scope().name == self.scope
       assert tf.get_default_graph().get_name_scope() == self.scope
@@ -185,12 +184,8 @@ class Network:
       raise ValueError("Components of a Network must have unique names.")
 
     # List inputs and outputs.
-    self.input_shapes = [
-        tfutil.shape_to_list(t.shape) for t in self.input_templates
-    ]
-    self.output_shapes = [
-        tfutil.shape_to_list(t.shape) for t in self.output_templates
-    ]
+    self.input_shapes = [t.shape.as_list() for t in self.input_templates]
+    self.output_shapes = [t.shape.as_list() for t in self.output_templates]
     self.input_shape = self.input_shapes[0]
     self.output_shape = self.output_shapes[0]
     self.output_names = [
@@ -223,11 +218,11 @@ class Network:
     networks."""
     tfutil.run([var.initializer for var in self.trainables.values()])
 
-  def get_output_for(
-      self,
-      *in_expr: TfExpression,
-      return_as_list: bool = False,
-      **dynamic_kwargs) -> Union[TfExpression, List[TfExpression]]:
+  def get_output_for(self,
+                     *in_expr: TfExpression,
+                     return_as_list: bool = False,
+                     **dynamic_kwargs
+                    ) -> Union[TfExpression, List[TfExpression]]:
     """Construct TensorFlow expression(s) for the output(s) of this network,
     given the input expression(s)."""
     assert len(in_expr) == self.num_inputs
@@ -266,8 +261,8 @@ class Network:
                  ] if tfutil.is_tf_expression(out_expr) else list(out_expr)
     return out_expr
 
-  def get_var_local_name(self, var_or_global_name: Union[TfExpression,
-                                                         str]) -> str:
+  def get_var_local_name(self,
+                         var_or_global_name: Union[TfExpression, str]) -> str:
     """Get the local name of a given variable, without any surrounding name
     scopes."""
     assert tfutil.is_tf_expression(var_or_global_name) or isinstance(
@@ -276,8 +271,8 @@ class Network:
         var_or_global_name, str) else var_or_global_name.name
     return self.var_global_to_local[global_name]
 
-  def find_var(self, var_or_local_name: Union[TfExpression,
-                                              str]) -> TfExpression:
+  def find_var(self,
+               var_or_local_name: Union[TfExpression, str]) -> TfExpression:
     """Find variable by local or global name."""
     assert tfutil.is_tf_expression(var_or_local_name) or isinstance(
         var_or_local_name, str)
@@ -302,7 +297,7 @@ class Network:
   def __getstate__(self) -> dict:
     """Pickle export."""
     state = dict()
-    state["version"] = 3
+    state["version"] = 4
     state["name"] = self.name
     state["static_kwargs"] = dict(self.static_kwargs)
     state["components"] = dict(self.components)
@@ -323,7 +318,7 @@ class Network:
       state = handler(state)
 
     # Set basic fields.
-    assert state["version"] in [2, 3]
+    assert state["version"] in [2, 3, 4]
     self.name = state["name"]
     self.static_kwargs = util.EasyDict(state["static_kwargs"])
     self.components = util.EasyDict(state.get("components", {}))
@@ -385,46 +380,6 @@ class Network:
     tfutil.set_vars(
         tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
 
-  def copy_compatible_trainables_from(self, src_net: "Network") -> None:
-    """Copy the compatible values of all trainable variables from the given
-    network, including sub-networks."""
-    names = []
-    for name in self.trainables.keys():
-      if name not in src_net.trainables:
-        print("Not restoring (not present):     {}".format(name))
-      elif self.trainables[name].shape != src_net.trainables[name].shape:
-        print("Not restoring (different shape): {}".format(name))
-
-      if name in src_net.trainables and self.trainables[
-          name].shape == src_net.trainables[name].shape:
-        names.append(name)
-
-    tfutil.set_vars(
-        tfutil.run({self.vars[name]: src_net.vars[name] for name in names}))
-
-  def apply_swa(self, src_net, epoch):
-    """Perform stochastic weight averaging on the compatible values of all
-    trainable variables from the given network, including sub-networks."""
-    names = []
-    for name in self.trainables.keys():
-      if name not in src_net.trainables:
-        print("Not restoring (not present):     {}".format(name))
-      elif self.trainables[name].shape != src_net.trainables[name].shape:
-        print("Not restoring (different shape): {}".format(name))
-
-      if name in src_net.trainables and self.trainables[
-          name].shape == src_net.trainables[name].shape:
-        names.append(name)
-
-    scale_new_data = 1.0 / (epoch + 1)
-    scale_moving_average = (1.0 - scale_new_data)
-    tfutil.set_vars(
-        tfutil.run({
-            self.vars[name]: (src_net.vars[name] * scale_new_data +
-                              self.vars[name] * scale_moving_average)
-            for name in names
-        }))
-
   def convert(self,
               new_func_name: str,
               new_name: str = None,
@@ -439,11 +394,11 @@ class Network:
     net.copy_vars_from(self)
     return net
 
-  def setup_as_moving_average_of(
-      self,
-      src_net: "Network",
-      beta: TfExpressionEx = 0.99,
-      beta_nontrainable: TfExpressionEx = 0.0) -> tf.Operation:
+  def setup_as_moving_average_of(self,
+                                 src_net: "Network",
+                                 beta: TfExpressionEx = 0.99,
+                                 beta_nontrainable: TfExpressionEx = 0.0
+                                ) -> tf.Operation:
     """Construct a TensorFlow op that updates the variables of this network to
     be slightly closer to those of the given network."""
     with tfutil.absolute_name_scope(self.scope + "/_MovingAvg"):
@@ -455,19 +410,18 @@ class Network:
           ops.append(var.assign(new_value))
       return tf.group(*ops)
 
-  def run(
-      self,
-      *in_arrays: Tuple[Union[np.ndarray, None], ...],
-      input_transform: dict = None,
-      output_transform: dict = None,
-      return_as_list: bool = False,
-      print_progress: bool = False,
-      minibatch_size: int = None,
-      num_gpus: int = 1,
-      assume_frozen: bool = False,
-      custom_inputs=None,
-      **dynamic_kwargs
-  ) -> Union[np.ndarray, Tuple[np.ndarray, ...], List[np.ndarray]]:
+  def run(self,
+          *in_arrays: Tuple[Union[np.ndarray, None], ...],
+          input_transform: dict = None,
+          output_transform: dict = None,
+          return_as_list: bool = False,
+          print_progress: bool = False,
+          minibatch_size: int = None,
+          num_gpus: int = 1,
+          assume_frozen: bool = False,
+          custom_inputs: Any = None,
+          **dynamic_kwargs
+         ) -> Union[np.ndarray, Tuple[np.ndarray, ...], List[np.ndarray]]:
     """Run this network for the given NumPy array(s), and return the output(s)
     as NumPy array(s).
 
@@ -483,8 +437,8 @@ class Network:
         minibatch_size:     Maximum minibatch size to use, None = disable batching.
         num_gpus:           Number of GPUs to use.
         assume_frozen:      Improve multi-GPU performance by assuming that the trainable parameters will remain changed between calls.
+        custom_inputs:      Allow to use another tensor as input instead of default placeholders.
         dynamic_kwargs:     Additional keyword arguments to be passed into the network build function.
-        custom_inputs:      Allow to use another Tensor as input instead of default Placeholders
     """
     assert len(in_arrays) == self.num_inputs
     assert not all(arr is None for arr in in_arrays)
@@ -566,8 +520,8 @@ class Network:
     # Run minibatches.
     in_expr, out_expr = self._run_cache[key]
     out_arrays = [
-        np.empty([num_items] + tfutil.shape_to_list(expr.shape)[1:],
-                 expr.dtype.name) for expr in out_expr
+        np.empty([num_items] + expr.shape.as_list()[1:], expr.dtype.name)
+        for expr in out_expr
     ]
 
     for mb_begin in range(0, num_items, minibatch_size):
@@ -637,8 +591,8 @@ class Network:
 
       # Scope does not contain ops as immediate children => recurse deeper.
       contains_direct_ops = any(
-          "/" not in op.name[len(global_prefix):] and op.type != "Identity"
-          for op in cur_ops)
+          "/" not in op.name[len(global_prefix):] and
+          op.type not in ["Identity", "Cast", "Transpose"] for op in cur_ops)
       if (level == 0 or
           not contains_direct_ops) and (len(cur_ops) + len(cur_vars)) > 1:
         visited = set()
@@ -673,10 +627,9 @@ class Network:
 
     for layer_name, layer_output, layer_trainables in self.list_layers():
       num_params = sum(
-          np.prod(tfutil.shape_to_list(var.shape)) for var in layer_trainables)
+          int(np.prod(var.shape.as_list())) for var in layer_trainables)
       weights = [
-          var for var in layer_trainables
-          if var.name.endswith("/weight:0") or var.name.endswith("/weight_1:0")
+          var for var in layer_trainables if var.name.endswith("/weight:0")
       ]
       weights.sort(key=lambda x: len(x.name))
       if len(weights) == 0 and len(layer_trainables) == 1:

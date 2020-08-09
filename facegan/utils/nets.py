@@ -7,7 +7,6 @@
 
 import pickle
 
-import facegan.dnnlib as dnnlib
 import facegan.dnnlib.tflib as tflib
 
 #----------------------------------------------------------------------------
@@ -95,8 +94,8 @@ def load_networks(path_or_url_path):
   if path_or_url_path in _cached_networks:
     return _cached_networks[path_or_url_path]
 
-  if dnnlib.util.is_url(path_or_url_path):
-    stream = dnnlib.util.open_url(
+  if facegan.dnnlib.util.is_url(path_or_url_path):
+    stream = facegan.dnnlib.util.open_url(
         path_or_url_path,
         cache_dir='.stylegan2-cache',
     )

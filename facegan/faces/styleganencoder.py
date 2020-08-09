@@ -1,4 +1,3 @@
-import argparse
 import glob
 import os
 import pickle
@@ -16,7 +15,7 @@ import facegan.utils.config as config
 from facegan.encoder.generator_model import Generator
 from facegan.encoder.perceptual_model import PerceptualModel, load_images
 from facegan.faces.base_encoder import Encoder
-from facegan.utils.utils import split_to_batches, str2bool
+from facegan.utils.utils import split_to_batches
 
 
 class StyleGANEncoder(Encoder):
@@ -138,7 +137,6 @@ class StyleGANEncoder(Encoder):
 
         if (ff_model is None):
           if os.path.exists(self.load_effnet):
-            import efficientnet
             from efficientnet import preprocess_input
             print("Loading EfficientNet Model:")
             ff_model = load_model(self.load_effnet,)

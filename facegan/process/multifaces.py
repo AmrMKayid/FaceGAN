@@ -76,8 +76,8 @@ class MultiFaceCropper:
     height, width = img.shape[:2]
 
     for (x, y, w, h) in faces:
-      face_img = img[y - self.radius:y + h + self.radius,
-                     x - self.radius:x + w + self.radius]
+      face_img = img[y - self.radius:y + h + self.radius, x - self.radius:x +
+                     w + self.radius]
       last_img = cv2.resize(
           face_img,
           (self.cropped_size, self.cropped_size),

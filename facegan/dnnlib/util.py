@@ -1,9 +1,8 @@
-# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+﻿# Copyright (c) 2019, NVIDIA Corporation. All rights reserved.
 #
-# This work is licensed under the Creative Commons Attribution-NonCommercial
-# 4.0 International License. To view a copy of this license, visit
-# http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
-# Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+# This work is made available under the Nvidia Source Code License-NC.
+# To view a copy of this license, visit
+# https://nvlabs.github.io/stylegan2/license.html
 """Miscellaneous utility classes and functions."""
 
 import ctypes
@@ -294,10 +293,10 @@ def get_top_level_function_name(obj: Any) -> str:
 # ------------------------------------------------------------------------------------------
 
 
-def list_dir_recursively_with_ignore(
-    dir_path: str,
-    ignores: List[str] = None,
-    add_base_to_relative: bool = False) -> List[Tuple[str, str]]:
+def list_dir_recursively_with_ignore(dir_path: str,
+                                     ignores: List[str] = None,
+                                     add_base_to_relative: bool = False
+                                    ) -> List[Tuple[str, str]]:
   """List all files recursively in a given directory while ignoring given file
   and directory names.
 
@@ -352,10 +351,12 @@ def copy_files_and_create_dirs(files: List[Tuple[str, str]]) -> None:
 # ------------------------------------------------------------------------------------------
 
 
-def is_url(obj: Any) -> bool:
+def is_url(obj: Any, allow_file_urls: bool = False) -> bool:
   """Determine whether the given object is a valid URL string."""
   if not isinstance(obj, str) or not "://" in obj:
     return False
+  if allow_file_urls and obj.startswith('file:///'):
+    return True
   try:
     res = requests.compat.urlparse(obj)
     if not res.scheme or not res.netloc or not "." in res.netloc:
@@ -374,11 +375,12 @@ def open_url(url: str,
              verbose: bool = True) -> Any:
   """Download the given URL and return a binary-mode file object to access the
   data."""
-  if not is_url(url) and os.path.isfile(url):
-    return open(url, 'rb')
-
-  assert is_url(url)
+  assert is_url(url, allow_file_urls=True)
   assert num_attempts >= 1
+
+  # Handle file URLs.
+  if url.startswith('file:///'):
+    return open(url[len('file:///'):], "rb")
 
   # Lookup from cache.
   url_md5 = hashlib.md5(url.encode("utf-8")).hexdigest()
@@ -412,7 +414,9 @@ def open_url(url: str,
                 url = requests.compat.urljoin(url, links[0])
                 raise IOError("Google Drive virus checker nag")
             if "Google Drive - Quota exceeded" in content_str:
-              raise IOError("Google Drive quota exceeded")
+              raise IOError(
+                  "Google Drive download quota exceeded -- please try again later"
+              )
 
           match = re.search(r'filename="([^"]*)"',
                             res.headers.get("Content-Disposition", ""))

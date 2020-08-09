@@ -1,22 +1,26 @@
 import argparse
 import bz2
 import io
-import math
 import os
-import pickle
 from base64 import b64decode
 from datetime import datetime
 
-import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL
 import PIL.Image
-from google.colab.output import eval_js
-from facegan import ROOT_PATH
-#@title `Images through Webcam`
-from IPython.display import HTML, Audio
+from IPython.display import HTML
 from PIL import Image
+
+from facegan import ROOT_PATH
+
+try:
+  import google.colab
+  from google.colab.output import eval_js
+
+  IN_COLAB = True
+except:
+  IN_COLAB = False
 
 VIDEO_HTML = """
 <video autoplay

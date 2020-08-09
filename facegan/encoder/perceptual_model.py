@@ -245,8 +245,8 @@ class PerceptualModel:
     # - discriminator_network.get_output_for(tflib.convert_images_from_uint8(ref_img, nhwc_to_nchw=True), stub)
 
   def generate_face_mask(self, im):
-    from imutils import face_utils
     import cv2
+    from imutils import face_utils
     rects = self.detector(im, 1)
     # loop over the face detections
     for (j, rect) in enumerate(rects):
