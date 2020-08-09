@@ -20,7 +20,7 @@ class FaceAligner:
         get_file(
             'shape_predictor_68_face_landmarks.dat.bz2',
             FaceAligner.LANDMARKS_MODEL_URL,
-            cache_subdir='temp',
+            cache_subdir=f'{ROOT_PATH}/data/models',
         ))
 
     self.landmarks_detector = LandmarksDetector(self.landmarks_model_path)
@@ -45,8 +45,7 @@ class FaceAligner:
     ):
       try:
         print('Starting face alignment...')
-        # face_img_name = '%s_%02d.png' % (os.path.splitext(img_name)[0], i)
-        aligned_face_path = os.path.join(aligned_dir, img_name)
+        aligned_face_path = os.path.join(aligned_dir, img_name)  # TODO: mkdir
         aligned_img = image_align(
             img,
             aligned_face_path,
@@ -73,7 +72,6 @@ class FaceAligner:
     for img_name in images:
       raw_img_path = img_name  # os.path.join(raw_dir, img_name)
       face_img_name = f'{Path(raw_img_path).name.split(".")[0]}.png'
-
       self.align(
           img=raw_img_path,
           img_name=face_img_name,
