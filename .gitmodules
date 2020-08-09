@@ -1,3 +1,0 @@
-[submodule "stylegan-encoder"]
-	path = stylegan-encoder
-	url = git@github.com:AmrMKayid/stylegan-encoder.git
