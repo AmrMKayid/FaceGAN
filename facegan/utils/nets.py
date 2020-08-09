@@ -6,10 +6,11 @@
 """List of pre-trained StyleGAN2 networks located on Google Drive."""
 
 import pickle
-
+from facegan import ROOT_PATH
+import facegan.dnnlib as dnnlib
 import facegan.dnnlib.tflib as tflib
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # StyleGAN2 Google Drive root: https://drive.google.com/open?id=1QHc-yF5C3DChRwSdZKcx1w6K8JvSxQi7
 
 gdrive_urls = {
@@ -94,10 +95,11 @@ def load_networks(path_or_url_path):
   if path_or_url_path in _cached_networks:
     return _cached_networks[path_or_url_path]
 
-  if facegan.dnnlib.util.is_url(path_or_url_path):
-    stream = facegan.dnnlib.util.open_url(
-        path_or_url_path,
-        cache_dir='.stylegan2-cache',
+  url_path = gdrive_urls.get(path_or_url_path, '')
+  if dnnlib.util.is_url(url_path):
+    stream = dnnlib.util.open_url(
+        url_path,
+        cache_dir=f'{ROOT_PATH}/data/models',
     )
   else:
     stream = open(
@@ -113,4 +115,4 @@ def load_networks(path_or_url_path):
   return G, D, Gs
 
 
-#----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
