@@ -1,7 +1,7 @@
 import os
 from glob import glob
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 import numpy as np
 from tensorflow.keras.utils import get_file
@@ -66,14 +66,17 @@ class FaceAligner:
       self,
       raw_dir=f'{ROOT_PATH}/data/cropped',  # Directory with raw images for face alignment
       aligned_dir=f'{ROOT_PATH}/data/aligned',  # Directory for storing aligned images
-  ) -> None:
+  ) -> List[np.ndarray]:
 
+    imgs = []
     images = glob(f'{raw_dir}/*.png') + glob(f'{raw_dir}/*.jpg')
     for img_name in images:
       raw_img_path = img_name  # os.path.join(raw_dir, img_name)
       face_img_name = f'{Path(raw_img_path).name.split(".")[0]}.png'
-      self.align(
+      img = self.align(
           img=raw_img_path,
           img_name=face_img_name,
           aligned_dir=aligned_dir,
       )
+      imgs.append(img)
+    return imgs

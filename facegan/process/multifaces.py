@@ -29,8 +29,9 @@ class MultiFaceCropper:
   ) -> List[np.ndarray]:
     return self._crop(image)
 
-  def auto_crop(self) -> None:
+  def auto_crop(self) -> List[np.ndarray]:
 
+    imgs = []
     images = glob(f'{self.data_dir}/*.png') + glob(f'{self.data_dir}/*.jpg')
     for image_path in images:
       image_path = Path(image_path)
@@ -39,7 +40,11 @@ class MultiFaceCropper:
 
       img = cv2.imread(str(image_path))
 
-      _ = self._crop(img, img_name)
+      img = self._crop(img, img_name)
+
+      imgs.append(img)
+
+    return sum(imgs, [])
 
   def _crop(
       self,
