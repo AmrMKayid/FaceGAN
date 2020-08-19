@@ -42,7 +42,8 @@ class MultiFaceCropper:
 
       img = self._crop(img, img_name)
 
-      imgs.append(img)
+      img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+      imgs.append(img_rgb)
 
     return sum(imgs, [])
 
