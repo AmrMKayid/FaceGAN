@@ -52,7 +52,7 @@ var data = new Promise(resolve=>{
 def take_photo(
     quality=1.0,
     size=(800, 600),
-):
+) -> Image:
   display(HTML(VIDEO_HTML % (size[0], size[1], quality)))
   data = eval_js("data")
   binary = b64decode(data.split(',')[1])
@@ -61,8 +61,10 @@ def take_photo(
 
   timestamp_str = datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")
   filename = f'{ROOT_PATH}/data/raw/photo_{timestamp_str}.jpeg'
-  Image.fromarray(img).save(filename)
+  img = Image.fromarray(img)
+  img.save(filename)
   print('Image captured and saved to %s' % filename)
+  return img, filename
 
 
 def unpack_bz2(src_path):
