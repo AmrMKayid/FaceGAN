@@ -12,7 +12,7 @@ from tqdm import tqdm
 import facegan.dnnlib as dnnlib
 import facegan.dnnlib.tflib as tflib
 import facegan.utils.config as config
-from facegan.encoder.generator_model import Generator
+from facegan.encoder.generator_model import SG1Generator
 from facegan.encoder.perceptual_model import PerceptualModel, load_images
 from facegan.faces.base_encoder import Encoder
 from facegan.utils.utils import split_to_batches
@@ -46,7 +46,7 @@ class StyleGANEncoder(Encoder):
       self.generator_network, self.discriminator_network, self.Gs_network = pickle.load(
           model)
 
-    self.generator = Generator(
+    self.generator = SG1Generator(
         self.Gs_network,
         self.batch_size,
         clipping_threshold=self.clipping_threshold,
