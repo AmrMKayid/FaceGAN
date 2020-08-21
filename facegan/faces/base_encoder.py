@@ -15,7 +15,8 @@ class Encoder:
       str = f'{ROOT_PATH}/data/latent_representations',  # Directory for storing dlatent representations
       data_dir:
       str = f'{ROOT_PATH}/data/models',  # Directory for storing optional models
-      mask_dir: str = 'data/masks',  # Directory for storing optional masks
+      mask_dir:
+      str = f'{ROOT_PATH}/data/masks',  # Directory for storing optional masks
       load_last: str = '',  # Start with embeddings from directory
       dlatent_avg:
       str = '',  # Use dlatent from file specified here for truncation instead of dlatent_avg from Gs
