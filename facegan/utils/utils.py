@@ -59,8 +59,8 @@ def take_photo(
   f = io.BytesIO(binary)
   img = np.asarray(Image.open(f))
 
-  timestamp_str = datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)")
-  filename = f'{ROOT_PATH}/data/raw/photo_{timestamp_str}.jpeg'
+  timestamp_str = datetime.now().strftime("%d-%b-%Y_%H:%M:%S")
+  filename = f'{ROOT_PATH}/data/raw/photo_{timestamp_str}.png'
   img = Image.fromarray(img)
   img.save(filename)
   print('Image captured and saved to %s' % filename)
@@ -152,3 +152,14 @@ def move_latent_and_save(
                 str(i).zfill(3) + '.png')
     if len(coeffs) == 1:
       return result
+
+
+def display_folder_content(folder, res=256):
+  if folder[-1] != '/':
+    folder += '/'
+  for i, img_path in enumerate(sorted(os.listdir(folder))):
+    if '.png' in img_path:
+      display(
+          Image.open(folder + img_path).resize((res, res)),
+          'img %d: %s' % (i, img_path))
+      print('\n')
