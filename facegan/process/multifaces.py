@@ -16,7 +16,7 @@ class MultiFaceCropper:
       self,
       data_dir=f'{ROOT_PATH}/data/raw',
       cropped_size=1024,
-      radius=500,
+      radius=250,
   ) -> None:
     self.face_cascade = cv2.CascadeClassifier(MultiFaceCropper.CASCADE_PATH)
     self.data_dir = data_dir
@@ -42,10 +42,10 @@ class MultiFaceCropper:
 
       img = self._crop(img, img_name)
 
-      img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+      img_rgb = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
       imgs.append(img_rgb)
 
-    return sum(imgs, [])
+    return imgs
 
   def _crop(
       self,
