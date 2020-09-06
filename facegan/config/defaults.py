@@ -4,8 +4,7 @@ from facegan import ROOT_PATH
 
 
 class Config(SimpleNamespace):
-  """Wrapper around SimpleNamespace, allows
-  dot notation attribute access"""
+  """Wrapper around SimpleNamespace, allows dot notation attribute access."""
 
 
 def default():
@@ -50,6 +49,15 @@ def default():
           # Size of blur filter to smoothly composite the images
           composite_blur=8,
       ),
+      urls=Config(
+          # Fetch a StyleGAN model to train on from this URL from # My Drive: karras2019stylegan-ffhq-1024x1024.pkl
+          # Original Model here: https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ
+          # (A lot of requests to this model ... sometimes Google Drive is out of quota for downloading this model)
+          stylegan=
+          'https://drive.google.com/uc?id=1o4zmXaHtd_oNL754NsXNWi9wYOlAPTC3',
+          perceptual=
+          'https://drive.google.com/uc?id=1N2-m9qszOeVC9Tq77WxsLnuWwOedQiD2',
+      ),
       models=Config(
           perceptual=Config(
               # Size of images for the Resnet model
@@ -86,6 +94,8 @@ def default():
               sharpen_input=True,
           ),
           generator=Config(
+              # Use dlatent from file specified here for truncation instead of dlatent_avg from Gs
+              dlatent_avg="",
               # Add noise to dlatents during optimization
               randomize_noise=False,
               # Tile dlatents to use a single vector at each scale
@@ -104,7 +114,7 @@ def default():
           # Use MS-SIM perceptual loss; 0 to disable, > 0 to scale.
           use_mssim_loss=200,
           # Use LPIPS perceptual loss; 0 to disable, > 0 to scale.
-          use_lpips_loss=0,
+          use_lpips_loss=100,  #it was zero (TODO: from exps?! need to check) 0,
           # Use L1 penalty on latents; 0 to disable, > 0 to scale.
           use_l1_penalty=0.3,
           # Use trained discriminator to evaluate realism.
