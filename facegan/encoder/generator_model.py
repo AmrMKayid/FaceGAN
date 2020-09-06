@@ -53,9 +53,9 @@ class Generator:
     self._config = config
     self.batch_size = config.batch_size or batch_size
 
-    model_res = self._config.resolution.model or model_res,
-    clipping_threshold = self._config.models.generator.clipping_threshold or clipping_threshold,
-    randomize_noise = self._config.models.generator.randomize_noise or randomize_noise,
+    model_res = self._config.resolution.model or model_res
+    clipping_threshold = self._config.models.generator.clipping_threshold or clipping_threshold
+    randomize_noise = self._config.models.generator.randomize_noise or randomize_noise
 
     # TODO: Research this variable
     self.tiled_dlatent = config.models.generator.tile_dlatents or tiled_dlatent
