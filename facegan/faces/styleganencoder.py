@@ -12,60 +12,51 @@ from tqdm import tqdm
 import facegan.dnnlib as dnnlib
 import facegan.dnnlib.tflib as tflib
 import facegan.utils.config as config
-from facegan.encoder.generator_model import SG1Generator
+from facegan.encoder import Generator
 from facegan.encoder.perceptual_model import PerceptualModel, load_images
-from facegan.faces.base_encoder import Encoder
+from facegan.faces import Encoder
 from facegan.utils.utils import split_to_batches
 
 
 class StyleGANEncoder(Encoder):
   """Find latent representation of reference images using perceptual losses."""
 
-  # Fetch a StyleGAN model to train on from this URL from # My Drive: karras2019stylegan-ffhq-1024x1024.pkl
-  # Original Model here: https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ
-  # (A lot of requests to this model ... sometimes Google Drive is out of quota for downloading this model)
-  STYLEGAN_MODEL_URL = 'https://drive.google.com/uc?id=1o4zmXaHtd_oNL754NsXNWi9wYOlAPTC3'
-  PERCEPTUALMODEL_URL = 'https://drive.google.com/uc?id=1N2-m9qszOeVC9Tq77WxsLnuWwOedQiD2'
-
-  def __init__(self):
-    super(StyleGANEncoder, self).__init__(
-        model_url=StyleGANEncoder.STYLEGAN_MODEL_URL,
-        iterations=500,  # Quicker for testing
-    )
+  def __init__(self) -> None:
+    super().__init__()
 
     self.build()
 
   def build(self) -> None:
-    # Initialize generator and perceptual model
+    """Initialize generator and perceptual model."""
 
+    # Initialize TensorFlow.
     tflib.init_tf()
     with dnnlib.util.open_url(
-        self.model_url,
-        cache_dir=config.cache_dir,
-    ) as model:
-      self.generator_network, self.discriminator_network, self.Gs_network = pickle.load(
-          model)
+        self.config.urls.stylegan,
+        cache_dir=self.config.data.models,
+    ) as pretrained_stylegan_model:
+      # generator_network (_G) = Instantaneous snapshot of the generator. Mainly useful for resuming a previous training run.
+      # discriminator_network (_D) = Instantaneous snapshot of the discriminator. Mainly useful for resuming a previous training run.
+      # Gs_network (Gs) = Long-term average of the generator. Yields higher-quality results than the instantaneous snapshot.
+      self.generator_network, self.discriminator_network, \
+                self.Gs_network = pickle.load(pretrained_stylegan_model)
 
-    self.generator = SG1Generator(
-        self.Gs_network,
-        self.batch_size,
-        clipping_threshold=self.clipping_threshold,
-        tiled_dlatent=self.tile_dlatents,
-        model_res=self.model_res,
-        randomize_noise=self.randomize_noise,
-    )
-    if (self.dlatent_avg != ''):
-      self.generator.set_dlatent_avg(np.load(self.dlatent_avg))
+    self.generator = Generator(self.Gs_network, self.config)
+
+    if (self._config.models.generator.dlatent_avg != ''):
+      self.generator.set_dlatent_avg(
+          np.load(self.self._config.models.generator.dlatent_avg))
 
     self.perc_model = None
-    if (self.use_lpips_loss > 0.00000001):
+    if (self._config.loss.use_lpips_loss > 0.00000001):
       with dnnlib.util.open_url(
-          StyleGANEncoder.PERCEPTUALMODEL_URL,
-          cache_dir=config.cache_dir,
-      ) as model:
+          self.config.urls.perceptual,
+          cache_dir=self.config.data.models,
+      ) as pretrained_perceptual_model:  # vgg16_zhang_perceptual
         self.perc_model = pickle.load(model)
+
     self.perceptual_model = PerceptualModel(
-        SimpleNamespace(**vars(self)),
+        self._config,
         perc_model=self.perc_model,
         batch_size=self.batch_size,
     )
@@ -75,14 +66,6 @@ class StyleGANEncoder(Encoder):
     )
 
   def encode(self):
-
-    if self.output_video:
-      import cv2
-      synthesis_kwargs = dict(
-          output_transform=dict(func=tflib.convert_images_to_uint8,
-                                nchw_to_nhwc=False),
-          minibatch_size=self.batch_size,
-      )
 
     # Get all the images
     images = glob.glob(f'{self.src_dir}/*.png') + \
@@ -104,14 +87,14 @@ class StyleGANEncoder(Encoder):
     ):
       names = [os.path.splitext(os.path.basename(x))[0] for x in images_batch]
 
-      if self.output_video:
+      if self.config.video.output_video:
         video_out = {}
         for name in names:
           video_out[name] = cv2.VideoWriter(
-              os.path.join(self.video_dir, f'{name}.avi'),
-              cv2.VideoWriter_fourcc(*self.video_codec),
-              self.video_frame_rate,
-              (self.video_size, self.video_size),
+              os.path.join(self.config.data.videos, f'{name}.avi'),
+              cv2.VideoWriter_fourcc(*self.config.video.video_codec),
+              self.config.video.video_frame_rate,
+              (self.config.video.video_size, self.config.video.video_size),
           )
 
       self.perceptual_model.set_reference_images(images_batch)
